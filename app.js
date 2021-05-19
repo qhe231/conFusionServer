@@ -14,6 +14,7 @@ var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishRouter')
 var promoRouter = require('./routes/promoRouter')
 var leaderRouter = require('./routes/leaderRouter')
+var uploadRouter = require('./routes/uploadRouter')
 
 const mongoose = require('mongoose')
 const Dishes = require('./models/dishes')
@@ -33,8 +34,7 @@ app.all('*', (req, res, next) => {
   if (req.secure) {
     return next()
   } else {
-    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url) //后面是path/route
-    //307是status code, And the user agent must not change the request method if it reforms in automatic redirection to that URL. So, I'll be expecting user agent to retry with the same method that they have used for the original end point
+    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url)
   }
 })
 
@@ -80,6 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter);
 app.use('/leaders', leaderRouter);
+app.use('/imageUpload', uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
