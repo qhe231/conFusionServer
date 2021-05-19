@@ -17,7 +17,7 @@ promoRouter.route('/')
             }, (err) => next(err))
             .catch((err) => next(err))
     })
-    .post(authencicate.verifyUser, (req, res, next) => {
+    .post(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         Promotions.create(req.body)
             .then((promotion) => {
                 console.log('Promotion Created ', promotion)
@@ -27,11 +27,11 @@ promoRouter.route('/')
             }, (err) => next(err))
             .catch((err) => next(err))
     })
-    .put(authencicate.verifyUser, (req, res, next) => {
+    .put(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403
         res.end('PUT operrtion not supported on /promotions')
     })
-    .delete(authencicate.verifyUser, (req, res, next) => {
+    .delete(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         Promotions.remove({})
             .then((resp) => {
                 res.statusCode = 200
@@ -51,11 +51,11 @@ promoRouter.route('/:promoId')
             }, (err) => next(err))
             .catch((err) => next(err))
     })
-    .post(authencicate.verifyUser, (req, res, next) => {
+    .post(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403
         res.end('POST operrtion not supported on /promotions/' + req.params.promoId)
     })
-    .put(authencicate.verifyUser, (req, res, next) => {
+    .put(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         Promotions.findByIdAndUpdate(req.params.promoId, {
             $set: req.body
         }, { new: true })
@@ -66,7 +66,7 @@ promoRouter.route('/:promoId')
             }, (err) => next(err))
             .catch((err) => next(err))
     })
-    .delete(authencicate.verifyUser, (req, res, next) => {
+    .delete(authencicate.verifyUser, authencicate.verifyAdmin, (req, res, next) => {
         Promotions.findByIdAndRemove(req.params.promoId)
             .then((resp) => {
                 res.statusCode = 200
