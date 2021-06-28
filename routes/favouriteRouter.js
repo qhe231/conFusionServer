@@ -37,9 +37,14 @@ favouriteRouter.route('/')
                 })
                 favourite.save()
                     .then((favourite) => {
-                        res.statusCode = 200
-                        res.setHeader('Content-Type', 'application/json')
-                        res.json(favourite)
+                        Favourite.findById(favourite._id)
+                            .populate('user')
+                            .populate('dishes')
+                            .then((favourite) => {
+                                res.statusCode = 200
+                                res.setHeader('Content-Type', 'application/json')
+                                res.json(favourite)
+                            })
                     })
 
             }, (err) => next(err))
@@ -59,6 +64,27 @@ favouriteRouter.route('/:dishId')
     .options(cors.corsWithOptions, (req, res) => {
         res.sendStatus = 200
     })
+    .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
+        Favourite.findOne({ user: req.user._id })
+            .then((favourite) => {
+                if (!favourite) {
+                    res.statusCode = 200
+                    res.setHeader('Content-Type', 'Application/json')
+                    return res.json({ "exists": false, "favourite": favourite })
+                } else {
+                    if (favourite.dishes.indexOf(req.param.dishId) < 0) {
+                        res.statusCode = 200
+                        res.setHeader('Content-Type', 'Application/json')
+                        return res.json({ "exists": false, "favourite": favourite })
+                    } else {
+                        res.statusCode = 200
+                        res.setHeader('Content-Type', 'Application/json')
+                        return res.json({ "exists": true, "favourite": favourite })
+                    }
+                }
+            }, (err) => next(err))
+            .catch((err) => next(err))
+    })
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Favourite.findOne({ 'user': req.user })
             .then((favourite) => {
@@ -68,18 +94,30 @@ favouriteRouter.route('/:dishId')
                             favourite.dishes.push(req.params.dishId)
                             favourite.save()
                                 .then((favourite) => {
-                                    res.statusCode = 200
-                                    res.setHeader('Content-Type', 'application/json')
-                                    res.json(favourite)
+                                    Favourite.findById(favourite._id)
+                                        .populate('user')
+                                        .populate('dishes')
+                                        .then((favourite) => {
+                                            res.statusCode = 200
+                                            res.setHeader('Content-Type', 'application/json')
+                                            res.json(favourite)
+                                        })
+
                                 })
                         })
                 } else {
                     favourite.dishes.push(req.params.dishId)
                     favourite.save()
                         .then((favourite) => {
-                            res.statusCode = 200
-                            res.setHeader('Content-Type', 'application/json')
-                            res.json(favourite)
+                            Favourite.findById(favourite._id)
+                                .populate('user')
+                                .populate('dishes')
+                                .then((favourite) => {
+                                    res.statusCode = 200
+                                    res.setHeader('Content-Type', 'application/json')
+                                    res.json(favourite)
+                                })
+
                         })
                 }
             }, (err) => next(err))
@@ -92,9 +130,14 @@ favouriteRouter.route('/:dishId')
                     favourite.dishes.pull(req.params.dishId)
                     favourite.save()
                         .then((favourite) => {
-                            res.statusCode = 200
-                            res.setHeader('Content-Type', 'application/json')
-                            res.json(favourite)
+                            Favourite.findById(favourite._id)
+                                .populate('user')
+                                .populate('dishes')
+                                .then((favourite) => {
+                                    res.statusCode = 200
+                                    res.setHeader('Content-Type', 'application/json')
+                                    res.json(favourite)
+                                })
                         })
                 } else if (favourite === null) {
                     err = new Error('No favourite dish is found!')
